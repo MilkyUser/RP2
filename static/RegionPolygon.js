@@ -1,3 +1,4 @@
+
 class RegionPolygon {
 
 	constructor(...args){

@@ -1,3 +1,30 @@
 {
-	
+	"materialList":
+	[
+		{
+			"tags": ["PLÁSTICO", "PET"],
+			"memo": [{"datetime": "2023-08-19T23:15:30.000Z", "text": "TESTE 1", "user": "123"}],
+			"lastModified": "2023-08-19T23:15:30.000Z"
+		},
+		{
+			"tags": ["VIDRO", "CACOS"],
+			"memo": [{"datetime": "2023-08-19T23:15:30.000Z", "text": "TESTE 2", "user": "123"}],
+			"lastModified": "2023-08-19T23:15:30.000Z"
+		},
+		{
+			"tags": ["Plástico", "PET"],
+			"memo": [{"datetime": "2023-08-19T23:15:30.000Z", "text": "TESTE 3", "user": "123"}],
+			"lastModified": "2023-08-19T23:15:30.000Z"
+		},
+		{
+			"tags": ["PAPEL", "ESCOLAR"],
+			"memo": [{"datetime": "2023-08-19T23:15:30.000Z", "text": "TESTE 4", "user": "123"}],
+			"lastModified": "2023-08-19T23:15:30.000Z"
+		},
+		{
+			"tags": ["PAPEL", "PAPELÃO", "CAIXAS"],
+			"memo": [{"datetime": "2023-08-19T23:15:30.000Z", "text": "TESTE 5", "user": "123"}],
+			"lastModified": "2023-08-19T23:15:30.000Z"
+		}	
+	]
 }
