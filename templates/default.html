@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+  
   <head>
     <style>
       body {
@@ -16,8 +17,9 @@
     <title>Plataforma de Recicláveis</title>
   </head>
   
+  <script src="{{url_for('static', filename='location.js')}}"></script>
   <body onLoad="initPosition()">
-    <script src="{{url_for('static', filename='location.js')}}"></script></script>
+    <link rel="preload" href="{{ url_for('static', filename='materialsTest.json') }}" as="fetch">
     
     <!-- Responsive navbar-->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
