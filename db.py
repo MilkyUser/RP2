@@ -10,6 +10,30 @@ def connect_db():
 	return psycopg2.connect(dbname='rpii', user='postgres', password='postgres')
 
 
+def get_recyclable_tags(recyclable_id):
+	cur.execute(
+		f"""
+		SELECT tag
+			FROM main.recyclable_tags
+			WHERE recyclable_id = {recyclable_id}
+		"""
+		)
+	recyclable_tags_list = cur.fetchall()
+	return recyclable_tags_list[0]
+
+
+def get_recyclable_entity(recyclable_id):
+	cur.execute(
+		f"""
+		SELECT id, coordinates, update_timestamp
+			FROM main.recyclable
+			WHERE id = {recyclable_id};
+		"""
+		)
+	recyclable = cur.fetchone()
+	return recyclable
+
+
 def get_recyclable_entity_in_area(point_1, point_2):
 	
 	min_lat = min(point_1[0], point_2[0])
@@ -25,6 +49,18 @@ def get_recyclable_entity_in_area(point_1, point_2):
 		)
 	recyclable_list = cur.fetchall()
 	return recyclable_list
+
+
+def get_recyclable_images(recyclable_id):
+	cur.execute(
+		f"""
+		SELECT image_blob
+			FROM main.recyclable_image
+			WHERE recyclable_id = {recyclable_id};
+		"""
+		)
+	recyclable_image_list = cur.fetchall()
+	return recyclable_image_list
 
 
 def remove_image(recyclable_id, image_id):

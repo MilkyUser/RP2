@@ -2,14 +2,13 @@ let lat = 0;
 let lon = 0;
 let defaultZoomLevel = 15;
 let map; // Leaflet map object loaded on initPosition()
-let currentRegionPolygon; // A ser implementado: objeto que guarda polígono convexo com a área que o usuário já passou no mapa, para guardar locais já solicitados do servidor em um buffer interno
-let materialsDict; // Dicionário onde <coordenadas>: <objeto "Material Reciclável">
 let boundToLocation = false;
+let rendered_markers;
 
 async function initPosition(){
   
   // TODO: should ask for the user permition first
-  materialsDict = {};
+  rendered_markers = {};
   let position = await getPosition();
   lat = position.coords.latitude;
   lon = position.coords.longitude;
@@ -121,38 +120,51 @@ function moveEnd(){
   
   zoomLevel = map.getZoom();
   boundToLocation = false;
+  console.log(zoomLevel);
   if (zoomLevel >= 12){
-    for (marker in materialsDict){
-      materialsDict[marker].remove();
-      delete materialsDict[marker]; 
+    for (marker in rendered_markers){
+      rendered_markers[marker].remove();
+      delete rendered_markers[marker]; 
     }
-    for (let i = 0; i<5; i++){
-      simulate_material_point(map.unproject(map.getPixelBounds().getTopLeft()), map.unproject(map.getPixelBounds().getBottomRight()), i+1);
-    }
+    (async () => {
+      const top_left = map.unproject(map.getPixelBounds().getTopLeft());
+      const bottom_right = map.unproject(map.getPixelBounds().getBottomRight());
+      let response = await fetch(`/markers-inbound=${top_left.lat},${top_left.lng}&${bottom_right.lat},${bottom_right.lng}`);
+      let recyclableListObj = await response.json();
+      for (let rc of recyclableListObj.points) {
+        let imageResponse = await fetch(`/recyclabe-img=${rc.id}`);
+        let imageBlob = await imageResponse.blob();
+        let imageURL = URL.createObjectURL(imageBlob);
+        let marker = L.marker(rc.coordinates);
+        marker.bindPopup("<img src='" + imageURL + "' style='width: 95%; height: auto;'/><p> Tags: "+ rc.tags +"</p>");
+        marker.addTo(map);
+        rendered_markers[rc.coordinates] = marker;
+      }
+    })();
   } else {
 
   } 
   //console.log(`Top Left: ${map.unproject(map.getPixelBounds().getTopLeft())}, Bottom Right: ${map.unproject(map.getPixelBounds().getBottomRight())}, Zoom: ${zoomLevel}`);
 }
 
-function simulate_material_point(pointA, pointB, reciclableIndex){
-  let reciclableObj;
-  let newPointLat = Math.min(pointA.lat, pointB.lat) + Math.random() * Math.abs(pointB.lat - pointA.lat) ; 
-  let newPointLng = Math.min(pointA.lng, pointB.lng) + Math.random() * Math.abs(pointB.lng - pointA.lng);
-  let newLatLng = L.latLng(newPointLat, newPointLng);
-  materialsDict[newLatLng] = L.marker(newLatLng);
-  materialsDict[newLatLng].addTo(map);
-    fetch('/static/materialsTest.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-        }
-
-        return response.json();
-    })
-    .then(json => {
-      reciclableObj = json.materialList[reciclableIndex]; // do something
-      materialsDict[newLatLng].bindPopup(JSON.stringify(reciclableObj));
-    })
-    .catch(console.error);
-}
+//function simulate_material_point(pointA, pointB, reciclableIndex){
+//  let reciclableObj;
+//  let newPointLat = Math.min(pointA.lat, pointB.lat) + Math.random() * Math.abs(pointB.lat - pointA.lat) ; 
+//  let newPointLng = Math.min(pointA.lng, pointB.lng) + Math.random() * Math.abs(pointB.lng - pointA.lng);
+//  let newLatLng = L.latLng(newPointLat, newPointLng);
+//  materialsDict[newLatLng] = L.marker(newLatLng);
+//  materialsDict[newLatLng].addTo(map);
+//    fetch('/static/materialsTest.json')
+//    .then(response => {
+//        if (!response.ok) {
+//            throw new Error("HTTP error " + response.status);
+//        }
+//
+//        return response.json();
+//    })
+//    .then(json => {
+//      reciclableObj = json.materialList[reciclableIndex]; // do something
+//      materialsDict[newLatLng].bindPopup(JSON.stringify(reciclableObj));
+//    })
+//    .catch(console.error);
+//}
