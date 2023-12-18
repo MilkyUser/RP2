@@ -11,16 +11,17 @@ def connect_db():
 
 
 def get_recyclable_entity_in_area(point_1, point_2):
+	
+	min_lat = min(point_1[0], point_2[0])
+	min_lon = min(point_1[1], point_2[1])
+	max_lat = max(point_1[0], point_2[0])
+	max_lon = max(point_1[1], point_2[1])
 	cur.execute(
 		f"""
 		SELECT id, coordinates
 			FROM main.recyclable
-			WHERE 
-			earth_distance(ll_to_earth(coordinates[1], coordinates[0]), ll_to_earth({point_1[1]}, {point_1[0]})) < earth_distance(ll_to_earth({point_1[1]}, {point_1[0]}), ll_to_earth({point_2[1]}, {point_2[0]}))
-			AND
-			earth_distance(ll_to_earth(coordinates[1], coordinates[0]), ll_to_earth({point_2[1]}, {point_2[0]})) < earth_distance(ll_to_earth({point_2[1]}, {point_2[0]}), ll_to_earth({point_1[1]}, {point_1[0]}))
+			WHERE coordinates[0] > {min_lat} AND coordinates[0] < {max_lat} AND coordinates[1] > {min_lon} AND coordinates[1] < {max_lon}
 		"""
-
 		)
 	recyclable_list = cur.fetchall()
 	return recyclable_list
