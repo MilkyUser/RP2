@@ -1,6 +1,6 @@
-from enum import Enum
+from enum import StrEnum
 
-Tag = Enum('Tag', 
+Tag = StrEnum('Tag', 
 		[
 			'PAPER',
 			'PLASTIC', 
