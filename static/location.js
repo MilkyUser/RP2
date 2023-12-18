@@ -147,6 +147,55 @@ function moveEnd(){
   //console.log(`Top Left: ${map.unproject(map.getPixelBounds().getTopLeft())}, Bottom Right: ${map.unproject(map.getPixelBounds().getBottomRight())}, Zoom: ${zoomLevel}`);
 }
 
+
+async function cadastrarMaterial(){
+
+  let reciclableObj;
+
+  let position = await getPosition();
+  let newPointLat = position.coords.latitude;
+  let newPointLng = position.coords.longitude;
+
+  let newLatLng = L.latLng(newPointLat, newPointLng);
+  rendered_markers[newLatLng] = L.marker(newLatLng);
+  rendered_markers[newLatLng].addTo(map);
+    fetch('/static/materialsTest.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+        }
+
+        return response.json();
+    })
+    .then(json => {
+      //const selectedFile = document.getElementById("output").files[0];
+
+      let text = '{ "tags" : ["' + tagss.value + '"]' +
+      ', "text":["' + texto1.value + '"]}';
+
+      reciclableObj = JSON.parse(text);
+
+      //reciclableObj = json.materialList[reciclableIndex]; // do something
+      let reciclavel = JSON.stringify(reciclableObj);
+      
+      var output = document.getElementById('output');
+      rendered_markers[newLatLng].bindPopup("<img src='" + output+ "'/>" + "<p>" + reciclableObj.text +"</p> <p> Tag: "+ reciclableObj.tags +"</p>");
+      //materialsDict[newLatLng].bindPopup("<img src='../img/can.jpg' />" + "<p>" + reciclableObj.text +"</p> <p> Tag: "+ reciclableObj.tags +"</p>");
+    })
+    .catch(console.error);
+}
+
+var openFile = function(file) {
+    var input = file.target;
+    var reader = new FileReader();
+    reader.onload = function(){
+      var dataURL = reader.result;
+      var output = document.getElementById('output');
+      output.src = dataURL;
+    };
+    reader.readAsDataURL(input.files[0]);
+};
+
 //function simulate_material_point(pointA, pointB, reciclableIndex){
 //  let reciclableObj;
 //  let newPointLat = Math.min(pointA.lat, pointB.lat) + Math.random() * Math.abs(pointB.lat - pointA.lat) ; 
